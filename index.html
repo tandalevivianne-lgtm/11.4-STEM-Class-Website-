@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>STEM CLASS WEBSITE</title>
+<style>
+:root{--blue:#1e3a8a;--bg:#f1f5f9;--card:#fff;--text:#111}
+[data-theme=dark]{--bg:#0f172a;--card:#1e293b;--text:#f1f5f9}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial;background:var(--bg);color:var(--text)}
+nav{background:var(--blue);color:#fff;padding:10px;position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center}
+nav.links{display:flex;gap:12px}nav a{color:#fff;text-decoration:none;font-weight:600}
+#menuBtn{display:none;background:none;border:0;color:#fff;font-size:22px}
+@media(max-width:700px){nav.links{display:none;flex-direction:column;background:var(--blue);position:absolute;top:48px;left:0;right:0;padding:10px}#menuBtn{display:block}nav.open.links{display:flex}}
+.hero{background:linear-gradient(135deg,#1e3a8a,#3b82f6);color:#fff;padding:50px 20px;text-align:center}
+.card{background:var(--card);margin:12px;padding:16px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.btn{background:var(--blue);color:#fff;border:0;padding:8px 14px;border-radius:8px;margin:4px;cursor:pointer}
+input,textarea,select{background:var(--card);color:var(--text);border:1px solid #ccc;padding:8px;border-radius:8px;width:100%;margin:4px 0}
+table{width:100%;border-collapse:collapse;background:var(--card);font-size:12px}
+th,td{border:1px solid #ccc;padding:6px;text-align:center;min-width:80px}
+th{background:var(--blue);color:#fff}.timecol{background:#e0e7ff;font-weight:bold;position:sticky;left:0}
+.lunch{background:#ffedd5!important;font-weight:bold;color:#9a3412}
+.leaders{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.leader{text-align:center}.photo{width:100px;height:100px;border-radius:50%;background:#cbd5e1;margin:auto;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:12px}
+.photo img{width:100%;height:100%;object-fit:cover}
+.scroll{overflow-x:auto}
+.badge{padding:2px 8px;border-radius:10px;font-size:11px;color:#fff}.ev{background:#16a34a}.an{background:#2563eb}.imp{background:#dc2626}
+</style>
+</head>
+<body>
+<nav id="nav"><div><b>STEM</b></div><button id="menuBtn" onclick="document.getElementById('nav').classList.toggle('open')">☰</button>
+<div class="links"><a href="#home">Home</a><a href="#leadersSec">Class Leaders</a><a href="#news">News & Events</a><a href="#study">Study Zone</a><a href="#resources">Class Resources</a></div>
+<button class="btn" onclick="toggleDark()">🌙</button></nav>
+
+<section id="home" class="hero"><h1>STEM CLASS WEBSITE</h1><p>Learn • Build • Discover • Achieve</p>
+<p>Welcome to our class hub. Works 100% offline from flash drive.</p>
+<a href="#study" class="btn" style="background:#fff;color:#1e3a8a">View Timetable</a>
+<a href="#study" class="btn" style="background:#fff;color:#1e3a8a">Study Zone</a>
+<a href="#news" class="btn" style="background:#fff;color:#1e3a8a">News & Events</a></section>
+
+<div class="card"><h3>Class Info</h3>
+Students: <span contenteditable id="stNum">30</span> |
+Subjects: <span contenteditable id="stSub">7</span> |
+Leaders: <span contenteditable>7</span> |
+Year: <span contenteditable id="stYear">2026</span>
+<button class="btn" onclick="saveInfo()">Save</button></div>
+
+<div class="card"><h3>Quick Access</h3>
+<button class="btn" onclick="location.hash='#study'">Timetable</button>
+<button class="btn" onclick="showSubject('Physics')">Physics</button>
+<button class="btn" onclick="showSubject('Engineering')">Engineering</button>
+<button class="btn" onclick="showSubject('Mathematics')">Mathematics</button>
+<button class="btn" onclick="showSubject('Chemistry')">Chemistry</button>
+<button class="btn" onclick="showSubject('Biology')">Biology</button>
+<button class="btn" onclick="showSubject('ICT')">ICT</button>
+<button class="btn" onclick="showSubject('English')">English</button>
+</div>
+
+<div class="card"><h3>Global Search</h3><input id="gSearch" placeholder="Search notes, announcements, resources..." oninput="globalSearch()"><div id="gRes"></div></div>
+
+<section id="leadersSec" class="card"><h2>Class Leaders</h2><div class="leaders" id="leaderGrid"></div></section>
+
+<section id="news" class="card"><h2>News & Events</h2>
+<input id="nTitle" placeholder="Title"><textarea id="nDesc" placeholder="Description"></textarea>
+<input id="nDate" type="date"><input id="nTime" type="time"><input id="nLoc" placeholder="Location">
+<label><input type="checkbox" id="nImp" style="width:auto"> Important</label>
+<label><input type="checkbox" id="nIsEv" style="width:auto"> Event</label>
+<button class="btn" onclick="addNews()">Add</button><div id="newsList"></div></section>
+
+<section id="study" class="card"><h2>Study Zone</h2>
+<div class="card"><b>Dashboard:</b> <span id="dashDay"></span> | <span id="dashStats"></span></div>
+<h3>Timetable</h3><div class="scroll"><table id="tt"></table></div>
+<button class="btn" onclick="saveTT()">Save Timetable</button>
+<button class="btn" onclick="if(confirm('Clear?')){localStorage.removeItem('ttData');location.reload()}">Clear</button>
+
+<h3>Subject Notes</h3><div id="subjects"></div>
+
+<h3>Study Planner</h3><input id="plSub" placeholder="Subject"><input id="plTask" placeholder="Task"><button class="btn" onclick="addPlanner()">Add</button><div id="plannerList"></div>
+
+<h3>Assignments</h3><input id="aSub" placeholder="Subject"><input id="aTitle" placeholder="Title"><input id="aDue" type="date">
+<select id="aPri"><option>Low</option><option>Medium</option><option>High</option></select>
+<button class="btn" onclick="addAssign()">Add</button><div id="assignList"></div>
+
+<h3>Exam Tracker</h3><input id="eSub" placeholder="Subject"><input id="eName" placeholder="Assessment"><input id="eDate" type="date">
+<button class="btn" onclick="addExam()">Add</button><div id="examList"></div>
+</section>
+
+<section id="resources" class="card"><h2>Class Resources</h2>
+<input id="rName" placeholder="Resource name"><input id="rDesc" placeholder="Description">
+<select id="rCat"><option>STEM Resources</option><option>Mathematics</option><option>Physics</option><option>Chemistry</option><option>Biology</option><option>Engineering</option><option>ICT</option><option>English</option><option>General School Resources</option></select>
+<input type="file" id="rFile"><button class="btn" onclick="addResource()">Add Resource</button>
+<input placeholder="Search resources" oninput="searchRes(this.value)"><div id="resList"></div></section>
+
+<div class="card"><h3>Settings</h3>
+<button class="btn" onclick="exportData()">Export Class Data</button>
+<input type="file" id="impFile" accept=".json" onchange="importData(event)">
+<button class="btn" onclick="if(confirm('Clear all data?')){localStorage.clear();indexedDB.deleteDatabase('stemFiles');location.reload()}">Clear Website Data</button></div>
+
+<footer class="card" style="text-align:center">STEM Class Website<br>Learn • Build • Discover • Achieve<br>© <span id="yr"></span></footer>
+
+<script>
+// Dark mode
+function toggleDark(){let t=document.body.dataset.theme=='dark'?'':'dark';document.body.dataset.theme=t;localStorage.setItem('theme',t)}
+document.body.dataset.theme=localStorage.getItem('theme')||'';document.getElementById('yr').textContent=new Date().getFullYear();
+document.getElementById('dashDay').textContent='Today: '+new Date().toDateString();
+
+// Leaders - 7 positions
+const positions=["Vice Head Girl","Class Captain","Vice Captain","Spiritual Leader — Male","Spiritual Leader — Female","Class Treasurer — Male","Class Treasurer — Female"];
+let leaders=JSON.parse(localStorage.getItem('leaders')||'{}');
+const lg=document.getElementById('leaderGrid');
+positions.forEach(p=>{
+ let d=document.createElement('div');d.className='card leader';
+ d.innerHTML=`<div class="photo">${leaders[p+'_img']?`<img src="${leaders[p+'_img']}">`:'No Photo'}</div>
+ <b>${p}</b><br><span contenteditable id="ln_${p}">${leaders[p]||'Type name'}</span><br>
+ <input type="file" accept="image/*" style="font-size:11px"><br>
+ <button class="btn" onclick="saveLeader('${p}')">Save</button>
+ <button class="btn" onclick="removePhoto('${p}')">Remove Photo</button>`;
+ d.querySelector('input[type=file]').onchange=e=>{let r=new FileReader();r.onload=()=>{leaders[p+'_img']=r.result;localStorage.setItem('leaders',JSON.stringify(leaders));location.reload()};r.readAsDataURL(e.target.files[0])};
+ lg.appendChild(d);
+});
+function saveLeader(p){leaders[p]=document.getElementById('ln_'+p).innerText;localStorage.setItem('leaders',JSON.stringify(leaders));alert('Saved')}
+function removePhoto(p){delete leaders[p+'_img'];localStorage.setItem('leaders',JSON.stringify(leaders));location.reload()}
+function saveInfo(){localStorage.setItem('info',JSON.stringify({n:stNum.innerText,s:stSub.innerText,y:stYear.innerText}));alert('Saved')}
+
+// News
+let news=JSON.parse(localStorage.getItem('news')||'[]');
+function addNews(){news.unshift({t:nTitle.value,d:nDesc.value,date:nDate.value,time:nTime.value,loc:nLoc.value,imp:nImp.checked,ev:n
